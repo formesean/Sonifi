@@ -11,12 +11,14 @@ import { assets } from "@/utils/asset-utils";
 import { Platform, platforms } from "@/utils/platform-utils";
 import { cn } from "@/utils/tailwind-utils";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Poppins } from "next/font/google";
 import { PlatformRotation } from "@/components/platform-rotation";
 import EmblaCarousel from "../components/EmblaCarousel";
 import { EmblaOptionsType } from "embla-carousel-react";
 import "../app/embla.css";
+import { Cursor } from "@/components/cursor";
+import Link from "next/link";
 
 const poppins = Poppins({
   weight: "700",
@@ -31,6 +33,7 @@ export default function Home() {
     platforms[0]
   );
   const [showBackground, setShowBackground] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -85,7 +88,7 @@ export default function Home() {
       <div className="max-w-7xl mt-20 mx-auto">
         <div className="flex flex-col items-center relative z-10">
           <h1
-            className={`text-5xl max-w-3xl text-center leading-snug mb-12 ${poppins.className}`}
+            className={`text-5xl max-w-3xl text-center leading-snug mb-8 ${poppins.className}`}
           >
             <PlatformRotation currentPlatform={currentPlatform} />? Nah.{" "}
             <span
@@ -107,17 +110,20 @@ export default function Home() {
           </p>
 
           <div className="mb-2">
-            <button
-              className={cn(
-                "text-black px-6 py-3 rounded-md text-md font-semibold transition-colors duration-200",
-                {
-                  "bg-green-400": currentPlatform === "spotify",
-                  "bg-red-400": currentPlatform === "youtube",
-                }
-              )}
-            >
-              Sign Up Now!
-            </button>
+            <Link href="/signup">
+              <button
+                ref={buttonRef}
+                className={cn(
+                  "text-black px-6 py-3 rounded-md text-md font-semibold transition-colors duration-200",
+                  {
+                    "bg-green-400": currentPlatform === "spotify",
+                    "bg-red-400": currentPlatform === "youtube",
+                  }
+                )}
+              >
+                Sign Up Now!
+              </button>
+            </Link>
           </div>
 
           <section className="relative">
@@ -125,6 +131,8 @@ export default function Home() {
           </section>
         </div>
       </div>
+
+      <Cursor buttonRef={buttonRef} />
     </main>
   );
 }
