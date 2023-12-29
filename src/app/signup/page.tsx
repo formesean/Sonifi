@@ -3,15 +3,24 @@ import { assets } from "@/utils/asset-utils";
 import { Platform, platforms } from "@/utils/platform-utils";
 import { cn } from "@/utils/tailwind-utils";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
+
+const SPACE_DELIMITER = "%20";
+const SCOPES = [
+  "playlist-modify-private",
+  "playlist-modify-public",
+  "user-follow-read",
+  "ugc-image-upload",
+];
+const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
+const SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
 
 export default function Signup() {
   const [currentPlatform, setCurrentPlatform] = useState<Platform>(
     platforms[0]
   );
   const [showBackground, setShowBackground] = useState<boolean>(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -29,6 +38,10 @@ export default function Signup() {
   useEffect(() => {
     setShowBackground(true);
   }, []);
+
+  const handleSpotifyLogin = () => {
+    window.location.href = `${SPOTIFY_AUTH_URL}?client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true`;
+  };
 
   return (
     <main>
@@ -88,7 +101,10 @@ export default function Signup() {
               </div>
             </div>
 
-            <button className="bg-green-400 px-6 py-3 rounded-md text-md font-semibold w-[150%]">
+            <button
+              onClick={handleSpotifyLogin}
+              className="bg-green-400 px-6 py-3 rounded-md text-md font-semibold w-[150%]"
+            >
               <Image
                 src={assets.spotify}
                 alt="Spotify Icon"
