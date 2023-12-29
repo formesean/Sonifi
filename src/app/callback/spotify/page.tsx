@@ -5,7 +5,7 @@ import { cn } from "@/utils/tailwind-utils";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import "./style.css";
-import { Cookie } from "next/font/google";
+import { setCookie } from "cookies-next";
 
 const getSpotifyParameters = (hash: string) => {
   const stringAfterHash = hash.substring(1);
@@ -39,7 +39,9 @@ export default function Callback() {
           JSON.stringify(spotifyAuthData)
         );
 
-        window.location.href = "/spotify";
+        setCookie("logged", "true");
+
+        window.location.href = "/spotify/home";
       } catch (error) {
         console.error("Error during logging in: ", error);
       }
@@ -96,7 +98,7 @@ export default function Callback() {
         )}
       ></div>
 
-      <div className="loading flex inset-0 justify-center items-center h-screen w-screen">
+      <div className="loading flex inset-0 justify-center items-center h-screen w-screen z-10">
         <div className="loading__dot"></div>
         <div className="loading__dot"></div>
         <div className="loading__dot"></div>

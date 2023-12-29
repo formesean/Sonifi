@@ -110,7 +110,7 @@ export default function Home() {
           </p>
 
           <div className="mb-2">
-            <Link href="/signup">
+            <Link href="/signin">
               <button
                 ref={buttonRef}
                 className={cn(
