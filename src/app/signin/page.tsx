@@ -1,7 +1,7 @@
 "use client";
-import { assets } from "@/utils/asset-utils";
-import { Platform, platforms } from "@/utils/platform-utils";
-import { cn } from "@/utils/tailwind-utils";
+import { assets } from "@/lib/asset-utils";
+import { Platform, platforms } from "@/lib/platform-utils";
+import { cn } from "@/lib/tailwind-utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import "./style.css";

@@ -1,6 +1,6 @@
-import { assets } from "@/utils/asset-utils";
-import { type Platform, platforms } from "@/utils/platform-utils";
-import { cn } from "@/utils/tailwind-utils";
+import { assets } from "@/lib/asset-utils";
+import { type Platform, platforms } from "@/lib/platform-utils";
+import { cn } from "@/lib/tailwind-utils";
 import Image from "next/image";
 
 export const PlatformRotation = ({
