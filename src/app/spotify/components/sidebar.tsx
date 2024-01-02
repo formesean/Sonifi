@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { deleteCookie, getCookie, hasCookie } from "cookies-next";
+import fetchSpotifyShowsData from "@/app/api/getUserPlaylists";
 
 interface SpotifyPlaylistItem {
   id: string;
@@ -26,10 +27,13 @@ export function Sidebar({ className }: { className?: string }) {
   const [token, setToken] = useState("");
   const [data, setData] = useState<SpotifyApiResponse>({ items: [] });
   const [active, setActive] = useState<string>("secondary");
-  const currentPath = window.location.pathname;
+  const currentPath = typeof window !== "undefined" && window.location.pathname;
 
   useEffect(() => {
-    if (currentPath.includes("/spotify/generate")) {
+    if (
+      typeof currentPath === "string" &&
+      currentPath.includes("/spotify/generate")
+    ) {
       setActive("ghost");
     } else {
       setActive("secondary");
@@ -43,22 +47,17 @@ export function Sidebar({ className }: { className?: string }) {
         const [access_token, expires_in, token_type] = spotifyAuthData;
 
         setToken(access_token);
+
+        fetchSpotifyShowsData(access_token)
+          .then((response) => {
+            setData(response);
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
       }
     }
-
-    axios
-      .get(PLAYLISTS_ENDPOINT, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [token]);
+  }, [currentPath, setToken]);
 
   const handleActiveState = (variant: string) => {
     setActive(variant);
