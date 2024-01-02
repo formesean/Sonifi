@@ -4,8 +4,9 @@ import type { NextRequest } from "next/server";
 export default function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const isLogin = req.cookies.get("logged");
+  const hasSpotifyAuthData = req.cookies.get("spotifyAuthData");
 
-  if (!isLogin) {
+  if (!isLogin || !hasSpotifyAuthData) {
     if (req.nextUrl.pathname.startsWith("/spotify")) {
       const absoluteUrl = new URL("/", req.nextUrl.origin);
       return NextResponse.redirect(absoluteUrl.toString());

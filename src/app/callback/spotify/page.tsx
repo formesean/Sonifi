@@ -29,12 +29,7 @@ export default function Callback() {
         );
         const spotifyAuthData = [access_token, expires_in, token_type];
 
-        localStorage.clear();
-        localStorage.setItem(
-          "spotifyAuthData",
-          JSON.stringify(spotifyAuthData)
-        );
-
+        setCookie("spotifyAuthData", JSON.stringify(spotifyAuthData));
         setCookie("logged", "true");
 
         window.location.href = "/spotify/home";
@@ -47,7 +42,7 @@ export default function Callback() {
   return (
     <main>
       <BackgroundComponent />
-      <div className="loading flex inset-0 justify-center items-center h-screen w-screen z-10">
+      <div className="loading flex inset-0 justify-center items-center h-screen w-screen relative z-10 bg-transparent">
         <div className="loading__dot"></div>
         <div className="loading__dot"></div>
         <div className="loading__dot"></div>
