@@ -4,6 +4,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { deleteCookie, getCookie, hasCookie } from "cookies-next";
 
 interface SpotifyPlaylistItem {
   id: string;
@@ -20,10 +26,17 @@ export function Sidebar({ className }: { className?: string }) {
   const [token, setToken] = useState("");
   const [data, setData] = useState<SpotifyApiResponse>({ items: [] });
   const [active, setActive] = useState<string>("secondary");
+  const currentPath = window.location.pathname;
 
   useEffect(() => {
-    if (localStorage.getItem("spotifyAuthData")) {
-      const storedData = localStorage.getItem("spotifyAuthData");
+    if (currentPath.includes("/spotify/generate")) {
+      setActive("ghost");
+    } else {
+      setActive("secondary");
+    }
+
+    if (hasCookie("spotifyAuthData")) {
+      const storedData = getCookie("spotifyAuthData");
 
       if (storedData) {
         const spotifyAuthData = JSON.parse(storedData);
@@ -33,26 +46,29 @@ export function Sidebar({ className }: { className?: string }) {
       }
     }
 
-    handleGetPlaylist();
-  }, [token]);
-
-  const handleGetPlaylist = async () => {
     axios
       .get(PLAYLISTS_ENDPOINT, {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         setData(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
-  };
+  }, [token]);
 
   const handleActiveState = (variant: string) => {
     setActive(variant);
+  };
+
+  const handleLogout = () => {
+    setToken("");
+    deleteCookie("logged");
+    deleteCookie("spotifyAuthData");
+    window.location.href = "/";
   };
 
   const renderPlaylists = () => {
@@ -146,6 +162,34 @@ export function Sidebar({ className }: { className?: string }) {
           <ScrollArea className="h-[450px] px-1">
             <div className="space-y-1 p-2">{renderPlaylists()}</div>
           </ScrollArea>
+        </div>
+        <div className="px-3 py-2">
+          <Popover>
+            <PopoverTrigger className="inline-flex items-center h-10 px-4 py-2 w-full text-sm font-medium justify-start rounded-md hover:bg-red-500 hover:text-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="18"
+                viewBox="0 -960 960 960"
+                width="24"
+                fill="white"
+              >
+                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
+              </svg>
+              Log out
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="flex flex-col">
+                <p className="text-center">Are you sure you want to log out?</p>
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  className="w-full hover:bg-red-500 hover:text-white"
+                >
+                  Yes
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </div>
